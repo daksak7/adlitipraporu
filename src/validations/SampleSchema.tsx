@@ -28,7 +28,8 @@ export const SampleSchema=yup.object().shape(
     .required("Zorunlu alan"),
     gelisNedeni:yup 
     .string()
-    .required("Zorunlu alan"),
+    .required("Zorunlu alan")
+    .nullable(false),
     gelisNedeniAciklama:yup 
     .string()
     .optional(),

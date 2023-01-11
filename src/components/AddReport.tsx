@@ -56,7 +56,7 @@ export const previewValues = {
 
 export const AddReport: React.FC<{}> = () => {
   const [darpDurumu, setDarpDurumu] = useState();
-  const [uygunOrtam, setUygunOrtam] = useState(false);
+  const [uygunOrtam, setUygunOrtam] = useState(null);
   const [next, setNext] = useState(false);
   const [prevalues, setPrevalues] = useState(previewValues);
   const [pre, setPre] = useState(false);
@@ -132,6 +132,7 @@ export const AddReport: React.FC<{}> = () => {
                 ) : null}
                 <Divider />
                 <h4>Rapor Bilgileri</h4>
+                <label htmlFor="darpDurumu">Darp Durumu</label>
                 <Field
                   inline
                   id="darpDurumu"
@@ -156,7 +157,7 @@ export const AddReport: React.FC<{}> = () => {
                     onClick={() => {
                       setNext(true);
                     }}
-                    disabled={darpDurumu === undefined}
+                    disabled={darpDurumu ===null}
                   >
                     Devam
                   </Button>
@@ -245,7 +246,7 @@ export const AddReport: React.FC<{}> = () => {
         <Container>
           <>
             <h4>Rapor Önizleme</h4>
-
+            {console.log(Object.values(prevalues))}
             {JSON.stringify(prevalues, null, 2)}
             <br />
             <Button
