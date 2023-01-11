@@ -21,7 +21,7 @@ export enum KanGrubu {
   A = "A",
   B = "B",
   AB = "AB",
-  O = "O",
+  O = "0",
 }
 
 export type GenelBilgiler = {

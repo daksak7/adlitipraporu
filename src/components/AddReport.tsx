@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Formik, Form, Field } from "formik";
+import { SampleSchema } from "../validations/SampleSchema";
 
 import {
   Input,
@@ -23,12 +24,16 @@ interface MyFormValues {
   darpDurumu: boolean | null;
   gelisNedeni: string;
   gelisNedeniAciklama: string;
+  sikayet:string;
   uygunOrtamSaglandi: boolean | null;
-  odadaBulunanlar: object;
+  odadaBulunanlar: object|null;
+  doktorAdi:string;
+  organizasyon:string;
 }
 
 export const AddReport: React.FC<{}> = () => {
   const [darpDurumu, setDarpDurumu] = useState();
+  const [uygunOrtam, setUygunOrtam] = useState(false);
   const [next, setNext] = useState(false);
 
   const initialValues: MyFormValues = {
@@ -41,30 +46,38 @@ export const AddReport: React.FC<{}> = () => {
     darpDurumu: null,
     gelisNedeni: "",
     gelisNedeniAciklama: "",
+    sikayet:"",
     uygunOrtamSaglandi: null,
-    odadaBulunanlar: [],
+    odadaBulunanlar: null,
+    doktorAdi:"",
+    organizasyon:""
   };
   return (
     <div>
       <h2>Yeni rapor kaydı</h2>
       <Formik
         initialValues={initialValues}
+        validationSchema={SampleSchema}
         onSubmit={(values, actions) => {
           console.log({ values, actions });
           alert(JSON.stringify(values, null, 2));
           actions.setSubmitting(false);
         }}
       >
+        {({ errors, touched, isValidating }) => (
         <Container style={{ padding: 30 }}>
+        
           <Form>
             <h4>Hasta Bilgileri</h4>
             <label htmlFor="adi">Adı</label>
             <Field name="adi" id="adi" component={Input} />
+            {errors.adi && touched.adi ? <div>{errors.adi}</div> : null}
             <label htmlFor="soyadi">Soyadı</label>
             <Field name="soyadi" id="soyadi" component={Input} />
+            {errors.soyadi && touched.soyadi ? <div>{errors.soyadi}</div> : null}
             <label htmlFor="yas">Yaşı</label>
             <Field name="yas" id="yas" component={InputNumber} />
-
+            {errors.yas && touched.yas ? <div>{errors.yas}</div> : null}
             <label htmlFor="cinsiyet"> Cinsiyet </label>
             <Field
               name="cinsiyet"
@@ -72,21 +85,22 @@ export const AddReport: React.FC<{}> = () => {
               data={genders}
               component={SelectPicker}
             />
+            {errors.cinsiyet && touched.cinsiyet ? <div>{errors.cinsiyet}</div> : null}
             <br />
             <label htmlFor="kanGrubu"> Kan Grubu </label>
              <Field
+              searchable={false}
               data={kan} 
-              onChange={(value:KanGrubu)=>{
-                console.log(value);
-              }}
               name="kanGrubu"
               id="kanGrubu"
-              component={Cascader}
-            /> 
+              component={SelectPicker}
+            />
+            {errors.kanGrubu && touched.kanGrubu ? <div>{errors.kanGrubu}</div> : null}
             <Divider />
             <h4>Rapor Bilgileri</h4>
             <Field
               inline
+              id="darpDurumu"
               name="darpDurumu"
               value={darpDurumu}
               component={RadioGroup}
@@ -99,6 +113,8 @@ export const AddReport: React.FC<{}> = () => {
                 Hayır
               </Field>
             </Field>
+            {errors.darpDurumu && touched.darpDurumu ? <div>{errors.darpDurumu}</div> : null}
+            
             {!next ? (
               <Button
                 onClick={() => {
@@ -109,71 +125,74 @@ export const AddReport: React.FC<{}> = () => {
                 Devam
               </Button>
             ) : null}
-            {next ? <AddReportNext /> : null}
+            {next ? 
+                <>
+                <label htmlFor="gelisNedeni"> Geliş nedeni </label>
+                <br />
+                <Field
+                  id="gelisNedeni"
+                  name="gelisNedeni"
+                  data={gelis}
+                  component={SelectPicker}
+                />
+                {errors.gelisNedeni && touched.gelisNedeni ? <div>{errors.gelisNedeni}</div> : null}
+                <br />
+                <label htmlFor="gelisNedeniAciklama">Geliş nedeni açıklama</label>
+                <Field
+                  placeholder="Opsiyonel"
+                  id="gelisNedeniAciklama"
+                  name="gelisNedeniAciklama"
+                  component={Input}
+                />
+                <label htmlFor="sikayet">Şikayet</label>
+                <Field
+                  id="sikayet"
+                  name="sikayet"
+                  component={Input}
+                />
+                {errors.sikayet && touched.sikayet ? <div>{errors.sikayet}</div> : null}
+                <label htmlFor="uygunOrtamSaglandi"> Uygun ortam sağlandı mı? </label>
+                <br />
+                <Field
+                  value={uygunOrtam}
+                  onChange={setUygunOrtam}
+                  id="uygunOrtamSaglandi"
+                  name="uygunOrtamSaglandi"
+                  size="lg"
+                  checkedChildren="Evet"
+                  unCheckedChildren="Hayır"
+                  component={Toggle}
+                />
+                {errors.uygunOrtamSaglandi && touched.uygunOrtamSaglandi ? <div>{errors.uygunOrtamSaglandi}</div> : null}
+                <br />
+                <label htmlFor="odadaBulunanlar"> Odada bulunanlar </label>
+                <br />
+                <Field
+                  id="odadaBulunanlar"
+                  name="odadaBulunanlar"
+                  data={bulunanlar}
+                  component={TagPicker}
+                />
+                {errors.odadaBulunanlar && touched.odadaBulunanlar ? <div>Odada bulunanlar kısmı boş bırakılamaz</div> : null}
+                <br />
+                <label htmlFor="doktorAdi">Doktor adı</label>
+                <Field id="doktorAdi" name="doktorAdi" component={Input} />
+                {errors.doktorAdi && touched.doktorAdi ? <div>{errors.doktorAdi}</div> : null}
+                <label htmlFor="organizasyon">Organizasyon</label>
+                <Field id="organizasyon" name="organizasyon" component={Input} />
+                {errors.organizasyon && touched.organizasyon ? <div>{errors.organizasyon}</div> : null}
+                <Button type="submit">Raporu kaydet</Button>
+              </>
+            : null}
           </Form>
+          
         </Container>
+        )}
       </Formik>
     </div>
   );
 };
 
-export const AddReportNext: React.FC<{}> = () => {
-  const [uygunOrtam, setUygunOrtam] = useState(false);
-  return (
-    <>
-      <label htmlFor="gelisNedeni"> Geliş nedeni </label>
-      <br />
-      <Field
-        id="gelisNedeni"
-        name="gelisNedeni"
-        data={gelis}
-        component={SelectPicker}
-      />
-      <br />
-      <label htmlFor="gelisNedeniAciklama">Geliş nedeni açıklama</label>
-      <Field
-        placeholder="Textarea"
-        id="gelisNedeniAciklama"
-        name="gelisNedeniAciklama"
-        component={Input}
-      />
-      <label htmlFor="sikayet">Şikayet</label>
-      <Field
-        placeholder="Textarea"
-        id="sikayet"
-        name="sikayet"
-        component={Input}
-      />
-      <label htmlFor="uygunOrtamSaglandi"> Uygun ortam sağlandı mı? </label>
-      <br />
-      <Field
-        value={uygunOrtam}
-        onChange={setUygunOrtam}
-        id="uygunOrtamSaglandi"
-        name="uygunOrtamSaglandi"
-        size="lg"
-        checkedChildren="Evet"
-        unCheckedChildren="Hayır"
-        component={Toggle}
-      />
-      <br />
-      <label htmlFor="odadaBulunanlar"> Odada bulunanlar </label>
-      <br />
-      <Field
-        id="odadaBulunanlar"
-        name="odadaBulunanlar"
-        data={bulunanlar}
-        component={TagPicker}
-      />
-      <br />
-      <label htmlFor="doktorAdi">Doktor adı</label>
-      <Field id="doktorAdi" name="doktorAdi" component={Input} />
-      <label htmlFor="organizasyon">Organizasyon</label>
-      <Field id="organizasyon" name="organizasyon" component={Input} />
-      <Button type="submit">Raporu kaydet</Button>
-    </>
-  );
-};
 
 const genders = [Cinsiyet.Erkek,Cinsiyet.Kadin].map((item) => ({
   label: item,
@@ -182,64 +201,20 @@ const genders = [Cinsiyet.Erkek,Cinsiyet.Kadin].map((item) => ({
 
 
 
-const kan = [
-  {
-    label: "A",
-    value: KanGrubu.A,
-    children: [
-      {
-        label: "RhPozitif",
-        value: KanGrubuRh.RhPozitif,
-      },
-      {
-        label: "RhNegatif",
-        value: KanGrubuRh.RhNegatif,
-      },
-    ],
-  },
-  {
-    label: "B",
-    value: KanGrubu.B,
-    children: [
-      {
-        label: "RhPozitif",
-        value: KanGrubuRh.RhPozitif,
-      },
-      {
-        label: "RhNegatif",
-        value: KanGrubuRh.RhNegatif,
-      },
-    ],
-  },
-  {
-    label: "AB",
-    value: KanGrubu.AB,
-    children: [
-      {
-        label: "RhPozitif",
-        value: KanGrubuRh.RhPozitif,
-      },
-      {
-        label: "RhNegatif",
-        value: KanGrubuRh.RhNegatif,
-      },
-    ],
-  },
-  {
-    label: "0",
-    value: KanGrubu.O,
-    children: [
-      {
-        label: "RhPozitif",
-        value: KanGrubuRh.RhPozitif,
-      },
-      {
-        label: "RhNegatif",
-        value: KanGrubuRh.RhNegatif,
-      },
-    ],
-  },
-];
+const kan = 
+[
+  KanGrubu.A+KanGrubuRh.RhPozitif,
+  KanGrubu.A+KanGrubuRh.RhNegatif,
+  KanGrubu.B+KanGrubuRh.RhPozitif,
+  KanGrubu.B+KanGrubuRh.RhNegatif,
+  KanGrubu.AB+KanGrubuRh.RhPozitif,
+  KanGrubu.AB+KanGrubuRh.RhNegatif,
+  KanGrubu.O+KanGrubuRh.RhPozitif,
+  KanGrubu.O+KanGrubuRh.RhNegatif,
+].map((item)=>({
+  label:item,
+  value:item
+}))
 
 
 const gelis = [
