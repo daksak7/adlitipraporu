@@ -1,23 +1,20 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import "./App.css";
 import "rsuite/dist/rsuite.min.css";
 import { AddReport } from "./components/AddReport";
-import Nav from "./components/Nav";
 import Dashboard from "./components/Dashboard";
+import { Provider } from "./contexts/ReportDataContext";
 
 function App() {
   return (
-    <>
+    <Provider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Nav/>}>
-            <Route index element={<Dashboard />} />
-            <Route path="/addreport" element={<AddReport />} />
-            <Route path="*" element={<Dashboard />} />
-          </Route>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/addreport" element={<AddReport />} />
+          <Route path="*" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
-    </>
+    </Provider>
   );
 }
 

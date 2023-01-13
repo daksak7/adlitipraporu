@@ -19,9 +19,11 @@ export const SampleSchema=yup.object().shape(
     .required("Zorunlu alan"),
     cinsiyet:yup 
     .string()
+    .nullable()
     .required("Zorunlu alan"),
     kanGrubu:yup 
     .string()
+    .nullable()
     .required("Zorunlu alan"),
     darpDurumu:yup 
     .boolean()
@@ -32,7 +34,8 @@ export const SampleSchema=yup.object().shape(
     .nullable(false),
     gelisNedeniAciklama:yup 
     .string()
-    .optional(),
+    .nullable()
+    .min(25,"Bu alanı doldurmak isterseniz en az 25 karakter girmelisiniz"),
     sikayet:yup 
     .string()
     .required("Zorunlu alan")
